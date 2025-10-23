@@ -2,18 +2,22 @@ using UnityEngine;
 
 public class PlayerMoveScript : MonoBehaviour
 {
+    // Movement speeds
     public float speed = 3f;
     public float runSpeed = 5f;
     private float _forwardInput;
     private float _horizontalInput;
     
+    // Jumping
     private readonly float _jumpForce = 10f;
     public bool isGrounded;
     private Rigidbody _rb;
 
+    // Animator and camera reference
     private Animator _animator;
     public Transform cameraTransform;
     
+    // Teleport threshold (if player falls below this y, reset position)
     private readonly float _yRotation = 10f;
 
     private void Start()
@@ -39,6 +43,7 @@ public class PlayerMoveScript : MonoBehaviour
         _forwardInput = Input.GetAxis("Vertical");
         _horizontalInput = Input.GetAxis("Horizontal");
 
+        // Calculate camera-relative forward and right directions
         Vector3 camForward = cameraTransform.forward;
         camForward.y = 0;
         camForward.Normalize();
@@ -47,6 +52,7 @@ public class PlayerMoveScript : MonoBehaviour
         camRight.y = 0;
         camRight.Normalize();
 
+        // Combine input with camera directions
         Vector3 moveDirection = (camForward * _forwardInput + camRight * _horizontalInput).normalized;
 
         //Player walk script
@@ -83,6 +89,7 @@ public class PlayerMoveScript : MonoBehaviour
     
     private void Jump()
     {
+        //Jumping if pressed SpaceBar
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
             Vector3 jump = new Vector3(0, _jumpForce, 0);
@@ -93,6 +100,7 @@ public class PlayerMoveScript : MonoBehaviour
     
     private void OnCollisionEnter(Collision collision)
     {
+        // Detect ground collision
         if (collision.gameObject.CompareTag("isOnGround"))
         {
             isGrounded = true;
@@ -101,6 +109,7 @@ public class PlayerMoveScript : MonoBehaviour
     
     private void PlayerTeleport()
     {
+        // Reset player position if they fall below certain Y level
         if (gameObject.transform.position.y < -_yRotation)
         {
             gameObject.transform.position = new Vector3(0, 0, 0);

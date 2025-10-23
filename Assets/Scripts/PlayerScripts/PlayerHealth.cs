@@ -3,9 +3,13 @@ using UnityEngine.UI;
 
 public class PlayerHealth : MonoBehaviour
 {
+    // Player's current health
     public int playerHealth = 30;
+    // Whether the player is currently defending with a shield
     private bool _isDefend;
+    // Time before the player body disappears after death
     private float _deadPlayerBodyDisappearingTime = 5f;
+    // Right mouse button index (for Input.GetMouseButton)
     private readonly int _mouseRB = 1;
     private Animator _animator;
     [SerializeField] Slider _HPslider;
@@ -20,6 +24,7 @@ public class PlayerHealth : MonoBehaviour
     
     public void TakeDamage(int damage)
     {
+        // Ignore damage if defending
         if(_isDefend)
         {
             Debug.Log("Атака отбита щитом");
@@ -27,6 +32,7 @@ public class PlayerHealth : MonoBehaviour
         
         else
         {
+            // Reduce health and update UI
             playerHealth -= damage;
             _HPslider.value = playerHealth;
             _animator.SetTrigger("GetHit");
@@ -42,14 +48,13 @@ public class PlayerHealth : MonoBehaviour
     
     public void DefendAnimation()
     {
-        //if right-click mouse then Defend effect on
+        // If right mouse button pressed start defending
         if(Input.GetMouseButtonDown(_mouseRB))
         {
             _animator.SetTrigger("Defend");
             _isDefend = true;
         }
         
-        //if not right-click mouse then Defend effect off
         else if (Input.GetMouseButtonUp(_mouseRB))
         {
             _isDefend = false;
@@ -58,6 +63,7 @@ public class PlayerHealth : MonoBehaviour
 
     public void TakeHealth(int health)
     {
+        // Heal the player
         playerHealth += health;
         playerHealth = Mathf.Clamp(playerHealth, 0, 30);
         _HPslider.value = playerHealth;
