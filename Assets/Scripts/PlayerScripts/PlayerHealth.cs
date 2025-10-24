@@ -1,44 +1,42 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerHealth : MonoBehaviour
+public class PlayerHealth : Character
 {
-    // Player's current health
-    public int playerHealth = 30;
     // Whether the player is currently defending with a shield
     private bool _isDefend;
     // Time before the player body disappears after death
     private float _deadPlayerBodyDisappearingTime = 5f;
     // Right mouse button index (for Input.GetMouseButton)
     private readonly int _mouseRB = 1;
-    private Animator _animator;
     [SerializeField] Slider _HPslider;
     void Start()
     {
         _animator = GetComponent<Animator>();
+        CurrentHealth = 30;
     }
     void Update()
     {
         DefendAnimation();
     }
     
-    public void TakeDamage(int damage)
+    public override void TakeDamage(int damage)
     {
         // Ignore damage if defending
         if(_isDefend)
         {
-            Debug.Log("Атака отбита щитом");
+            Debug.Log("The attack was defended");
         }
         
         else
         {
             // Reduce health and update UI
-            playerHealth -= damage;
-            _HPslider.value = playerHealth;
+            base.TakeDamage(damage);
+            _HPslider.value = CurrentHealth;
             _animator.SetTrigger("GetHit");
-            Debug.Log("Player Health is" + playerHealth);
+            Debug.Log("Player Health is" + CurrentHealth);
 
-            if (playerHealth <= 0)
+            if (CurrentHealth <= 0)
             {
                 _animator.SetTrigger("Death");
                 Destroy(gameObject, _deadPlayerBodyDisappearingTime);
@@ -64,9 +62,9 @@ public class PlayerHealth : MonoBehaviour
     public void TakeHealth(int health)
     {
         // Heal the player
-        playerHealth += health;
-        playerHealth = Mathf.Clamp(playerHealth, 0, 30);
-        _HPslider.value = playerHealth;
-        Debug.Log("Player Health is " + playerHealth);
+        CurrentHealth += health;
+        CurrentHealth = Mathf.Clamp(CurrentHealth, 0, 30);
+        _HPslider.value = CurrentHealth;
+        Debug.Log("Player Health is " + CurrentHealth);
     }
 }
